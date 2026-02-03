@@ -17,12 +17,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('domains', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('domain', 255)->unique();
-            $table->string(Tenancy::tenantKeyColumn())->comment('no-rls');
-
+            $table->uuid(Tenancy::tenantKeyColumn())->index();
             $table->timestamps();
-            $table->foreign(Tenancy::tenantKeyColumn())->references('id')->on('tenants')->onUpdate('cascade');
+            $table->foreign(Tenancy::tenantKeyColumn())
+                ->references('id')
+                ->on('tenants')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
         });
     }
 

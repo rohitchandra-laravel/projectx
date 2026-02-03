@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Stancl\Tenancy\Middleware;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,6 @@ Route::middleware([
     Middleware\ScopeSessions::class,
 ])->group(function () {
     Route::get('/', function () {
-        return 'Tenant ID: ' . tenant('id');
-    });
+        return Inertia::render('Home');
+    })->name('home');
 });

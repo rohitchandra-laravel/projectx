@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->uuid('tenant_id')->index();
             $table->string('name');
             $table->timestamps();
+            $table->foreign('tenant_id')
+                ->references('id')
+                ->on('tenants')
+                ->cascadeOnDelete();
         });
     }
 

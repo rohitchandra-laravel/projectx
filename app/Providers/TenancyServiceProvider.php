@@ -43,8 +43,8 @@ class TenancyServiceProvider extends ServiceProvider
             Events\CreatingTenant::class => [],
             Events\TenantCreated::class => [
                 JobPipeline::make([
-                    Jobs\CreateDatabase::class,
-                    Jobs\MigrateDatabase::class,
+                    // Jobs\CreateDatabase::class,
+                    // Jobs\MigrateDatabase::class,
                     // Jobs\SeedDatabase::class,
                     // Jobs\CreateStorageSymlinks::class,
 
@@ -72,7 +72,7 @@ class TenancyServiceProvider extends ServiceProvider
             ],
             Events\TenantDeleted::class => [
                 JobPipeline::make([
-                    Jobs\DeleteDatabase::class,
+                   // Jobs\DeleteDatabase::class,
                 ])->send(function (Events\TenantDeleted $event) {
                     return $event->tenant;
                 })->shouldBeQueued(false),

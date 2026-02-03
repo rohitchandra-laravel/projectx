@@ -81,7 +81,7 @@ return [
             Middleware\InitializeTenancyByDomain::class,
             Middleware\InitializeTenancyBySubdomain::class,
             Middleware\InitializeTenancyByDomainOrSubdomain::class,
-            Middleware\InitializeTenancyByPath::class,
+            
             Middleware\InitializeTenancyByRequestData::class,
             Middleware\InitializeTenancyByOriginHeader::class,
         ],
@@ -134,16 +134,16 @@ return [
                 'cache_ttl' => 3600, // seconds
                 'cache_store' => null, // null = default
             ],
-            Resolvers\PathTenantResolver::class => [
-                'tenant_parameter_name' => 'tenant',
-                'tenant_model_column' => null, // null = tenant key
-                'tenant_route_name_prefix' => 'tenant.',
-                'allowed_extra_model_columns' => [], // used with binding route fields
+            // Resolvers\PathTenantResolver::class => [
+            //     'tenant_parameter_name' => 'tenant',
+            //     'tenant_model_column' => null, // null = tenant key
+            //     'tenant_route_name_prefix' => 'tenant.',
+            //     'allowed_extra_model_columns' => [], // used with binding route fields
 
-                'cache' => false,
-                'cache_ttl' => 3600, // seconds
-                'cache_store' => null, // null = default
-            ],
+            //     'cache' => false,
+            //     'cache_ttl' => 3600, // seconds
+            //     'cache_store' => null, // null = default
+            // ],
             Resolvers\RequestDataTenantResolver::class => [
                 // Set any of these to null to disable that method of identification
                 'header' => 'X-Tenant',
@@ -167,7 +167,6 @@ return [
      */
     'bootstrappers' => [
         // Basic Laravel features
-        Bootstrappers\DatabaseTenancyBootstrapper::class,
         Bootstrappers\CacheTenancyBootstrapper::class,
         // Bootstrappers\CacheTagsBootstrapper::class, // Alternative to CacheTenancyBootstrapper
         // Bootstrappers\DatabaseCacheBootstrapper::class, // Separates cache by DB rather than by prefix, must run after DatabaseTenancyBootstrapper
@@ -197,7 +196,8 @@ return [
      * Database tenancy config. Used by DatabaseTenancyBootstrapper.
      */
     'database' => [
-        'central_connection' => env('DB_CONNECTION', 'central'),
+        'central_connection' => env('DB_CONNECTION', 'pgsql'),
+        'tenant_connection' => null,
 
         /**
          * Connection used as a "template" for the dynamically created tenant database connection.
@@ -220,28 +220,7 @@ return [
         /**
          * TenantDatabaseManagers are classes that handle the creation & deletion of tenant databases.
          */
-        'managers' => [
-            'sqlite' => Stancl\Tenancy\Database\TenantDatabaseManagers\SQLiteDatabaseManager::class,
-            'mysql' => Stancl\Tenancy\Database\TenantDatabaseManagers\MySQLDatabaseManager::class,
-            'mariadb' => Stancl\Tenancy\Database\TenantDatabaseManagers\MySQLDatabaseManager::class,
-            'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PostgreSQLDatabaseManager::class,
-            'sqlsrv' => Stancl\Tenancy\Database\TenantDatabaseManagers\MicrosoftSQLDatabaseManager::class,
-
-            /**
-             * Use these database managers to have a DB user created for each tenant database.
-             * You can customize the grants given to these users by changing the $grants property.
-             */
-            // 'mysql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PermissionControlledMySQLDatabaseManager::class,
-            // 'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PermissionControlledPostgreSQLDatabaseManager::class,
-            // 'sqlsrv' => Stancl\Tenancy\TenantDatabaseManagers\PermissionControlledMicrosoftSQLServerDatabaseManager::class,
-
-            /**
-             * Disable the pgsql manager above, and enable the one below if you
-             * want to separate tenant DBs by schemas rather than databases.
-             */
-            // 'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PostgreSQLSchemaManager::class, // Separate by schema instead of database
-            // 'pgsql' => Stancl\Tenancy\Database\TenantDatabaseManagers\PermissionControlledPostgreSQLSchemaManager::class, // Also permission controlled
-        ],
+        'managers' => [],
 
         /*
          * Drop tenant databases when `php artisan migrate:fresh` is used.
