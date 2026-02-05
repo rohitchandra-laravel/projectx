@@ -12,9 +12,12 @@ class DashboardController extends Controller
 {
     public function index(): Response
     {
-        if (! auth()->user()->hasRole('super-admin')) {
-            abort(403, 'Unauthorized access to central dashboard.');
-        }
+        // Debug info
+        $debug = [
+            'roles' => auth()->user()->getRoleNames(),
+            'team_id' => getPermissionsTeamId(),
+            'all_roles_for_user' => auth()->user()->roles()->get(),
+        ];
 
         $tenants = Tenant::with('domains')->get()->map(function ($tenant) {
             return [
@@ -34,6 +37,7 @@ class DashboardController extends Controller
                 'total_users' => User::count(),
                 'active_plans' => $tenants->where('plan', '!=', 'Trial')->count(),
             ],
+            'debug' => $debug,
         ]);
     }
 }

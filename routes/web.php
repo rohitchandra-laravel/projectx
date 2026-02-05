@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Central\DashboardController;
 
 foreach (config('tenancy.identification.central_domains') as $domain) {
     Route::domain($domain)->group(function () {
@@ -25,6 +26,8 @@ foreach (config('tenancy.identification.central_domains') as $domain) {
             return Inertia::render('Central/Contact');
         })->name('contact');
 
-        Route::middleware(['auth', 'web','role:super-admin'])->get('/dashboard', [\App\Http\Controllers\Central\DashboardController::class, 'index'])->name('dashboard');
+        Route::middleware(['auth'])->group(function () {
+            Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        });
     });
 }

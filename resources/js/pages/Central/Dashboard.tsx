@@ -22,7 +22,8 @@ interface Props {
     };
 }
 
-export default function Dashboard({ tenants, stats }: Props) {
+export default function Dashboard(props: Props) {
+    const { tenants, stats } = props;
     return (
         <MainLayout>
             <Head title="Super Admin Dashboard" />
@@ -129,6 +130,16 @@ export default function Dashboard({ tenants, stats }: Props) {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Debug Footer */}
+            {(props as any).debug && (
+                <div className="mt-12 p-4 rounded-lg bg-gray-100 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700">
+                    <h3 className="text-xs font-bold uppercase text-gray-500 mb-2 tracking-widest">Debug Context</h3>
+                    <pre className="text-[10px] font-mono overflow-auto dark:text-gray-400">
+                        {JSON.stringify((props as any).debug, null, 2)}
+                    </pre>
+                </div>
+            )}
         </MainLayout>
     );
 }

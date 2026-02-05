@@ -13,10 +13,13 @@ class SetPermissionContext
     public function handle(Request $request, Closure $next): Response
     {
         if (function_exists('tenant') && tenant('id')) {
-            setPermissionsTeamId(tenant('id'));
+            $teamId = tenant('id');
         } else {
-            setPermissionsTeamId(self::GLOBAL_TENANT_ID);
+            $teamId = self::GLOBAL_TENANT_ID;
         }
+
+        setPermissionsTeamId($teamId);
+        \Illuminate\Support\Facades\Log::debug('Permissions Team ID set to: '.$teamId);
 
         return $next($request);
     }
