@@ -24,5 +24,7 @@ foreach (config('tenancy.identification.central_domains') as $domain) {
         Route::get('/contact', function () {
             return Inertia::render('Central/Contact');
         })->name('contact');
+
+        Route::middleware(['auth', 'web','role:super-admin'])->get('/dashboard', [\App\Http\Controllers\Central\DashboardController::class, 'index'])->name('dashboard');
     });
 }

@@ -23,14 +23,13 @@ return [
          * The model you want to use as a Role model needs to implement the
          * `Spatie\Permission\Contracts\Role` contract.
          */
-
         'role' => Spatie\Permission\Models\Role::class,
 
     ],
 
     'guards' => [
-        'central',
-        'tenant',
+        'web',
+        'api',
     ],
 
     'table_names' => [
@@ -141,7 +140,7 @@ return [
     /*
      * The class to use to resolve the permissions team id
      */
-    'team_resolver' => \Spatie\Permission\DefaultTeamResolver::class,
+    'team_resolver' => \App\Resolvers\PermissionTenantResolver::class,
 
     /*
      * Passport Client Credentials Grant

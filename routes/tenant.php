@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Stancl\Tenancy\Middleware;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,9 +23,16 @@ Route::middleware([
     Middleware\InitializeTenancyByDomain::class,
     Middleware\PreventAccessFromUnwantedDomains::class,
     Middleware\ScopeSessions::class,
+    \App\Http\Middleware\SetPermissionContext::class,
 ])->group(function () {
     Route::get('/', function () {
         return Inertia::render('Tenant/Dashboard', [
+            'tenant' => [
+                'id' => tenant('id'),
+                'name' => tenant('data')['name'] ?? 'Your Workspace',
+                'plan' => tenant('data')['plan'] ?? 'Pro Plan', // Default to Pro as set in registration
+                'created_at' => tenant('created_at')->format('M d, Y'),
+            ],
             'stats' => [
                 'totalProjects' => \App\Models\Project::count(),
                 'activeTasks' => 0, // Placeholder
@@ -41,7 +48,7 @@ Route::middleware([
                     'target' => 'the workspace',
                     'time' => $user->created_at->diffForHumans(),
                 ];
-            })
+            }),
         ]);
     })->name('tenant.dashboard');
 });

@@ -1,9 +1,9 @@
 <?php
 
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -30,7 +30,7 @@ return new class extends Migration
 
         if (! Schema::hasColumn($tableNames['roles'], $columnNames['team_foreign_key'])) {
             Schema::table($tableNames['roles'], function (Blueprint $table) use ($columnNames) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable()->after('id');
+                $table->uuid($columnNames['team_foreign_key'])->nullable()->after('id');
                 $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
 
                 $table->dropUnique('roles_name_guard_name_unique');
@@ -40,7 +40,7 @@ return new class extends Migration
 
         if (! Schema::hasColumn($tableNames['model_has_permissions'], $columnNames['team_foreign_key'])) {
             Schema::table($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotPermission) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key'])->default('1');
+                $table->uuid($columnNames['team_foreign_key'])->default('1');
                 $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
 
                 if (DB::getDriverName() !== 'sqlite') {
@@ -48,8 +48,10 @@ return new class extends Migration
                 }
                 $table->dropPrimary();
 
-                $table->primary([$columnNames['team_foreign_key'], $pivotPermission, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_permissions_permission_model_type_primary');
+                $table->primary(
+                    [$columnNames['team_foreign_key'], $pivotPermission, $columnNames['model_morph_key'], 'model_type'],
+                    'model_has_permissions_permission_model_type_primary'
+                );
                 if (DB::getDriverName() !== 'sqlite') {
                     $table->foreign($pivotPermission)
                         ->references('id')->on($tableNames['permissions'])->onDelete('cascade');
@@ -59,7 +61,7 @@ return new class extends Migration
 
         if (! Schema::hasColumn($tableNames['model_has_roles'], $columnNames['team_foreign_key'])) {
             Schema::table($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames, $pivotRole) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key'])->default('1');
+                $table->uuid($columnNames['team_foreign_key'])->default('1');
                 $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
 
                 if (DB::getDriverName() !== 'sqlite') {
@@ -67,8 +69,10 @@ return new class extends Migration
                 }
                 $table->dropPrimary();
 
-                $table->primary([$columnNames['team_foreign_key'], $pivotRole, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_roles_role_model_type_primary');
+                $table->primary(
+                    [$columnNames['team_foreign_key'], $pivotRole, $columnNames['model_morph_key'], 'model_type'],
+                    'model_has_roles_role_model_type_primary'
+                );
                 if (DB::getDriverName() !== 'sqlite') {
                     $table->foreign($pivotRole)
                         ->references('id')->on($tableNames['roles'])->onDelete('cascade');
@@ -84,8 +88,5 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-
-    }
+    public function down(): void {}
 };
